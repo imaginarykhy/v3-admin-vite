@@ -116,6 +116,12 @@ pnpm lint
 - `types` Type definition
 - `wip` In development
 
+## Project preview
+
+![preview1.png](./src/assets/docs/preview1.png)
+![preview2.png](./src/assets/docs/preview2.png)
+![preview3.png](./src/assets/docs/preview3.png)
+
 ## 💕 Contributors
 
 Thanks to all the contributors!
@@ -123,6 +129,12 @@ Thanks to all the contributors!
 <a href="https://github.com/un-pany/v3-admin-vite/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=un-pany/v3-admin-vite" />
 </a>
+
+## 💕 Thanks for the sponsorship (the cost of sponsorship was used to send red envelopes in the group~)
+
+| Name                                               | Avatar                                                                                        |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| <a href="https://github.com/a3305278">a3305278</a> | <img src="https://avatars.githubusercontent.com/u/30458650?v=4" width="64px" height="64px" /> |
 
 ## 💕 Thanks star
 

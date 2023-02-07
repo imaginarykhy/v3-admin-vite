@@ -116,6 +116,12 @@ pnpm lint
 - `types` 类型定义文件更改
 - `wip` 开发中
 
+## 项目预览图
+
+![preview1.png](./src/assets/docs/preview1.png)
+![preview2.png](./src/assets/docs/preview2.png)
+![preview3.png](./src/assets/docs/preview3.png)
+
 ## 💕 贡献者
 
 感谢所有的贡献者！
@@ -123,6 +129,12 @@ pnpm lint
 <a href="https://github.com/un-pany/v3-admin-vite/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=un-pany/v3-admin-vite" />
 </a>
+
+## 💕 感谢赞助（赞助的费用拿来在群里发红包了~）
+
+| 账号                                               | 头像                                                                                          |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| <a href="https://github.com/a3305278">a3305278</a> | <img src="https://avatars.githubusercontent.com/u/30458650?v=4" width="64px" height="64px" /> |
 
 ## 💕 感谢 Star
 
