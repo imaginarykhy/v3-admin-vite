@@ -1,3 +1,5 @@
+/// <reference types="vitest" />
+
 import { type ConfigEnv, type UserConfigExport, loadEnv } from "vite"
 import path, { resolve } from "path"
 import vue from "@vitejs/plugin-vue"
@@ -35,40 +37,51 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
       /** 接口代理 */
       proxy: {
         "/api/v1": {
-          target: "https://mock.mengxuegu.com/mock/63218b5fb4c53348ed2bc212/api/v1",
+          // target: "https://mock.mengxuegu.com/mock/63218b5fb4c53348ed2bc212",
+          target: "https://www.fastmock.site/mock/761e2dda2b8890ab86c928a74e8f6538",
           ws: true,
           /** 是否允许跨域 */
-          changeOrigin: true,
-          rewrite: (path) => path.replace("/api/v1", "")
+          changeOrigin: true
         }
       }
     },
     build: {
       /** 消除打包大小超过 500kb 警告 */
-      chunkSizeWarningLimit: 2000,
-      /** Vite 2.6.x 以上需要配置 minify: "terser", terserOptions 才能生效 */
-      minify: "terser",
-      /** 在打包代码时移除 console.log、debugger 和 注释 */
-      terserOptions: {
-        compress: {
-          drop_console: false,
-          drop_debugger: true,
-          pure_funcs: ["console.log"]
-        },
-        format: {
-          /** 删除注释 */
-          comments: false
-        }
-      },
+      chunkSizeWarningLimit: 2048,
+      /** 禁用 gzip 压缩大小报告 */
+      reportCompressedSize: false,
       /** 打包后静态资源目录 */
-      assetsDir: "static"
+      assetsDir: "static",
+      rollupOptions: {
+        output: {
+          /**
+           * 分块策略
+           * 1. 注意这些包名必须存在，否则打包会报错
+           * 2. 如果你不想自定义 chunk 分割策略，可以直接移除这段配置
+           */
+          manualChunks: {
+            vue: ["vue", "vue-router", "pinia"],
+            element: ["element-plus", "@element-plus/icons-vue"],
+            vxe: ["vxe-table", "vxe-table-plugin-element", "xe-utils"]
+          }
+        }
+      }
+    },
+    /** 混淆器 */
+    esbuild: {
+      /** 打包时移除 console.log */
+      pure: ["console.log"],
+      /** 打包时移除 debugger */
+      drop: ["debugger"],
+      /** 打包时移除所有注释 */
+      legalComments: "none"
     },
     /** Vite 插件 */
     plugins: [
       vue(),
       vueJsx(),
       /** 将 SVG 静态图转化为 Vue 组件 */
-      svgLoader(),
+      svgLoader({ defaultImport: "url" }),
       /** SVG */
       createSvgIconsPlugin({
         iconDirs: [path.resolve(process.cwd(), "src/icons/svg")],
@@ -76,23 +89,11 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
       }),
       /** UnoCSS */
       UnoCSS()
-      /** 自动按需引入 (已更改为完整引入，所以注释了) */
-      // AutoImport({
-      //   dts: "./types/auto-imports.d.ts",
-      //   /** 自动按需导入 Element Plus 相关函数，比如 ElMessage */
-      //   resolvers: [ElementPlusResolver()],
-      //   /** 根据自动按需导入的相关 API，生成 .eslintrc-auto-import.json 文件供 Eslint 识别 */
-      //   eslintrc: {
-      //     enabled: true, // 默认 false
-      //     filepath: "./types/.eslintrc-auto-import.json", // 默认 "./.eslintrc-auto-import.json"
-      //     globalsPropValue: true // 默认 true (true | false | "readonly" | "readable" | "writable" | "writeable")
-      //   }
-      // }),
-      // Components({
-      //   dts: "./types/components.d.ts",
-      //   /** 自动按需导入 Element Plus 组件 */
-      //   resolvers: [ElementPlusResolver()]
-      // })
-    ]
+    ],
+    /** Vitest 单元测试配置：https://cn.vitest.dev/config */
+    test: {
+      include: ["tests/**/*.test.ts"],
+      environment: "jsdom"
+    }
   }
 }

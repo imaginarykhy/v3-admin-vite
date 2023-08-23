@@ -2,51 +2,40 @@ import { ref } from "vue"
 import store from "@/store"
 import { defineStore } from "pinia"
 import { usePermissionStore } from "./permission"
+import { useTagsViewStore } from "./tags-view"
+import { useSettingsStore } from "./settings"
 import { getToken, removeToken, setToken } from "@/utils/cache/cookies"
 import router, { resetRouter } from "@/router"
-import { type ILoginRequestData, loginApi, getUserInfoApi } from "@/api/login"
+import { loginApi, getUserInfoApi } from "@/api/login"
+import { type LoginRequestData } from "@/api/login/types/login"
 import { type RouteRecordRaw } from "vue-router"
+import routeSettings from "@/config/route"
 
 export const useUserStore = defineStore("user", () => {
   const token = ref<string>(getToken() || "")
   const roles = ref<string[]>([])
   const username = ref<string>("")
 
+  const permissionStore = usePermissionStore()
+  const tagsViewStore = useTagsViewStore()
+  const settingsStore = useSettingsStore()
+
   /** 设置角色数组 */
   const setRoles = (value: string[]) => {
     roles.value = value
   }
   /** 登录 */
-  const login = (loginData: ILoginRequestData) => {
-    return new Promise((resolve, reject) => {
-      loginApi({
-        username: loginData.username,
-        password: loginData.password,
-        code: loginData.code
-      })
-        .then((res) => {
-          setToken(res.data.token)
-          token.value = res.data.token
-          resolve(true)
-        })
-        .catch((error) => {
-          reject(error)
-        })
-    })
+  const login = async ({ username, password, code }: LoginRequestData) => {
+    const { data } = await loginApi({ username, password, code })
+    setToken(data.token)
+    token.value = data.token
   }
   /** 获取用户详情 */
-  const getInfo = () => {
-    return new Promise((resolve, reject) => {
-      getUserInfoApi()
-        .then((res) => {
-          roles.value = res.data.roles
-          username.value = res.data.username
-          resolve(res)
-        })
-        .catch((error) => {
-          reject(error)
-        })
-    })
+  const getInfo = async () => {
+    const { data } = await getUserInfoApi()
+    username.value = data.username
+    // 验证返回的 roles 是否为一个非空数组，否则塞入一个没有任何作用的默认角色，防止路由守卫逻辑进入无限循环
+    roles.value = data.roles?.length > 0 ? data.roles : routeSettings.defaultRoles
   }
   /** 切换角色 */
   const changeRoles = async (role: string) => {
@@ -54,12 +43,12 @@ export const useUserStore = defineStore("user", () => {
     token.value = newToken
     setToken(newToken)
     await getInfo()
-    const permissionStore = usePermissionStore()
     permissionStore.setRoutes(roles.value)
     resetRouter()
     permissionStore.dynamicRoutes.forEach((item: RouteRecordRaw) => {
       router.addRoute(item)
     })
+    _resetTagsView()
   }
   /** 登出 */
   const logout = () => {
@@ -67,12 +56,20 @@ export const useUserStore = defineStore("user", () => {
     token.value = ""
     roles.value = []
     resetRouter()
+    _resetTagsView()
   }
   /** 重置 Token */
   const resetToken = () => {
     removeToken()
     token.value = ""
     roles.value = []
+  }
+  /** 重置 Visited Views 和 Cached Views */
+  const _resetTagsView = () => {
+    if (!settingsStore.cacheTagsView) {
+      tagsViewStore.delAllVisitedViews()
+      tagsViewStore.delAllCachedViews()
+    }
   }
 
   return { token, roles, username, setRoles, login, getInfo, changeRoles, logout, resetToken }

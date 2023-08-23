@@ -1,15 +1,36 @@
 <div align="center">
-  <img alt="V3 Admin Vite Logo" width="120" height="120" src="./src/assets/layout/logo.png">
+  <img alt="V3 Admin Vite Logo" width="120" height="120" src="./src/assets/layouts/logo.png">
   <h1>V3 Admin Vite</h1>
   <span>English | <a href="./README.zh-CN.md">中文</a></span>
 </div>
 
 ## ⚡ Introduction
 
-v3-admin-vite is a free and open source middle and background management system basic solution, based on mainstream framework such as Vue3, TypeScript, Element Plus, Pinia and Vite.
+V3 Admin Vite is a free and open source middle and background management system basic solution, based on mainstream framework such as Vue3, TypeScript, Element Plus, Pinia and Vite
 
-- Vue-Cli 5.x: [v3-admin](https://github.com/un-pany/v3-admin)
+- Vue Cli 5.x: [v3-admin](https://github.com/un-pany/v3-admin)
 - Electron desktop: [v3-electron-vite](https://github.com/un-pany/v3-electron-vite)
+
+China repository: [Gitee](https://gitee.com/un-pany/v3-admin-vite)
+
+## 📚 Document
+
+- Chinese documentation: [link](https://juejin.cn/post/7089377403717287972)
+- Chinese getting started tutorial: [link](https://juejin.cn/column/7207659644487139387)
+
+## 📺 Online preview
+
+| Location     | account             | Link                                            |
+| ------------ | ------------------- | ----------------------------------------------- |
+| github-pages | `admin` or `editor` | [link](https://un-pany.github.io/v3-admin-vite) |
+
+## ❤️ Generate electricity with love
+
+- **Completely free**：But hopefully you order a star !!!
+- **Very concise**：No complicated encapsulation, no complicated type gymnastics, out of the box
+- **Detailed annotations**：Each configuration item is written with as detailed comments as possible
+- **Latest dependencies**: Regularly update all third-party dependencies to the latest version
+- **Very specification**: The code style is unified, the naming style is unified, and the comment style is unified
 
 ## Feature
 
@@ -26,7 +47,6 @@ v3-admin-vite is a free and open source middle and background management system 
 - **Prettier**： Code formatting
 - **Axios**: Promise based HTTP client (encapsulated)
 - **UnoCSS**: Real-time atomized CSS engine with high performance and flexibility
-- **Annotation**：Each configuration item is written with as detailed comments as possible
 - **Mobile Compatible**: The layout is compatible with mobile page resolution
 
 ## Functions
@@ -35,31 +55,18 @@ v3-admin-vite is a free and open source middle and background management system 
 - **Authority management**: Built-in page permissions (dynamic routing), instruction permissions, permission functions
 - **Multiple Environments**: Development, Staging, Production
 - **Multiple themes**: Normal, Dark, Dark Blue, theme modes
+- **Multiple layouts**：Built-in left, top, left-top three layout modes
 - **Error page**: 403, 404
 - **Dashboard**: Display different Dashboard pages according to different users
-- **Other functions**：SVG, Dynamic Sidebar, Dynamic Breadcrumb Navigation, Tabbed Navigation, Screenfull, Adaptive Shrink Sidebar
-
-## 📚 Document
-
-[Chinese documentation](https://juejin.cn/post/7089377403717287972)
-
-## Gitee repository
-
-[Gitee](https://gitee.com/un-pany/v3-admin-vite)
-
-## Online preview
-
-| Location     | account             | Link                                            |
-| ------------ | ------------------- | ----------------------------------------------- |
-| github-pages | `admin` or `editor` | [Link](https://un-pany.github.io/v3-admin-vite) |
+- **Other functions**：SVG, Dynamic Sidebar, Dynamic Breadcrumb Navigation, Tabbed Navigation, Screenfull, Adaptive Shrink Sidebar, HooK (Composables)
 
 ## 🚀 Development
 
 ```bash
 # configure
 1. installation of the recommended plugins in the .vscode directory
-3. node version 16+
-4. pnpm version 7.x
+2. node version 16+
+3. pnpm version 8.x
 
 # clone
 git clone https://github.com/un-pany/v3-admin-vite.git
@@ -94,10 +101,14 @@ pnpm build:stage
 pnpm build:prod
 ```
 
-## 🔧 Code formatting check
+## 🔧 Code inspection
 
 ```bash
+# code formatting
 pnpm lint
+
+# unit test
+pnpm test
 ```
 
 ## Git commit specification reference
@@ -130,15 +141,13 @@ Thanks to all the contributors!
   <img src="https://contrib.rocks/image?repo=un-pany/v3-admin-vite" />
 </a>
 
-## 💕 Thanks for the sponsorship (the cost of sponsorship was used to send red envelopes in the group~)
-
-| Name                                               | Avatar                                                                                        |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| <a href="https://github.com/a3305278">a3305278</a> | <img src="https://avatars.githubusercontent.com/u/30458650?v=4" width="64px" height="64px" /> |
-
 ## 💕 Thanks star
 
 Small projects are not easy to get a star, if you like this project, welcome to support a star! This is the only motivation for the author to maintain it on an ongoing basis (whisper: it's free after all)
+
+## ☕ Donate
+
+[See how to donate](https://github.com/un-pany/v3-admin-vite/issues/69)
 
 ## Group
 
@@ -151,4 +160,4 @@ QQ group：1014374415 (left) && add me on WeChat，Invite you to join WeChat gro
 
 [MIT](./LICENSE)
 
-Copyright (c) 2022 [pany](https://github.com/pany-ang)
+Copyright (c) 2022-present [pany](https://github.com/pany-ang)
