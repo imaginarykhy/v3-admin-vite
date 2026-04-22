@@ -1,52 +1,50 @@
 <script lang="ts" setup>
-import { computed } from "vue"
-import { useRoute } from "vue-router"
-import { storeToRefs } from "pinia"
-import { useAppStore } from "@/store/modules/app"
-import { usePermissionStore } from "@/store/modules/permission"
-import { useSettingsStore } from "@/store/modules/settings"
-import SidebarItem from "./SidebarItem.vue"
-import Logo from "../Logo/index.vue"
-import { getCssVariableValue } from "@/utils"
-import { DeviceEnum } from "@/constants/app-key"
+import { useDevice } from "@@/composables/useDevice"
+import { useLayoutMode } from "@@/composables/useLayoutMode"
+import { getCssVar } from "@@/utils/css"
+import { useAppStore } from "@/pinia/stores/app"
+import { usePermissionStore } from "@/pinia/stores/permission"
+import { useSettingsStore } from "@/pinia/stores/settings"
+import { Logo } from "../index"
+import Item from "./Item.vue"
 
-const v3SidebarMenuBgColor = getCssVariableValue("--v3-sidebar-menu-bg-color")
-const v3SidebarMenuTextColor = getCssVariableValue("--v3-sidebar-menu-text-color")
-const v3SidebarMenuActiveTextColor = getCssVariableValue("--v3-sidebar-menu-active-text-color")
+const v3SidebarMenuBgColor = getCssVar("--v3-sidebar-menu-bg-color")
+
+const v3SidebarMenuTextColor = getCssVar("--v3-sidebar-menu-text-color")
+
+const v3SidebarMenuActiveTextColor = getCssVar("--v3-sidebar-menu-active-text-color")
+
+const { isMobile } = useDevice()
+
+const { isLeft, isTop } = useLayoutMode()
 
 const route = useRoute()
+
 const appStore = useAppStore()
+
 const permissionStore = usePermissionStore()
+
 const settingsStore = useSettingsStore()
 
-const { sidebar, device } = storeToRefs(appStore)
-const { layoutMode, showLogo } = storeToRefs(settingsStore)
+const activeMenu = computed(() => route.meta.activeMenu || route.path)
 
-const activeMenu = computed(() => {
-  const {
-    meta: { activeMenu },
-    path
-  } = route
-  return activeMenu ? activeMenu : path
-})
+const noHiddenRoutes = computed(() => permissionStore.routes.filter(item => !item.meta?.hidden))
 
-const isCollapse = computed(() => !sidebar.value.opened)
-const isLeft = computed(() => layoutMode.value === "left")
-const isTop = computed(() => layoutMode.value === "top")
-const isMobile = computed(() => device.value === DeviceEnum.Mobile)
-const isLogo = computed(() => isLeft.value && showLogo.value)
+const isCollapse = computed(() => !appStore.sidebar.opened)
+
+const isLogo = computed(() => isLeft.value && settingsStore.showLogo)
+
 const backgroundColor = computed(() => (isLeft.value ? v3SidebarMenuBgColor : undefined))
+
 const textColor = computed(() => (isLeft.value ? v3SidebarMenuTextColor : undefined))
+
 const activeTextColor = computed(() => (isLeft.value ? v3SidebarMenuActiveTextColor : undefined))
-const sidebarMenuItemHeight = computed(() => {
-  return layoutMode.value !== "top" ? "var(--v3-sidebar-menu-item-height)" : "var(--v3-navigationbar-height)"
-})
-const sidebarMenuHoverBgColor = computed(() => {
-  return layoutMode.value !== "top" ? "var(--v3-sidebar-menu-hover-bg-color)" : "transparent"
-})
-const tipLineWidth = computed(() => {
-  return layoutMode.value !== "top" ? "2px" : "0px"
-})
+
+const sidebarMenuItemHeight = computed(() => !isTop.value ? "var(--v3-sidebar-menu-item-height)" : "var(--v3-navigationbar-height)")
+
+const sidebarMenuHoverBgColor = computed(() => !isTop.value ? "var(--v3-sidebar-menu-hover-bg-color)" : "transparent")
+
+const tipLineWidth = computed(() => !isTop.value ? "2px" : "0px")
 </script>
 
 <template>
@@ -59,17 +57,14 @@ const tipLineWidth = computed(() => {
         :background-color="backgroundColor"
         :text-color="textColor"
         :active-text-color="activeTextColor"
-        :unique-opened="true"
         :collapse-transition="false"
         :mode="isTop && !isMobile ? 'horizontal' : 'vertical'"
       >
-        <SidebarItem
-          v-for="route in permissionStore.routes"
-          :key="route.path"
-          :item="route"
-          :base-path="route.path"
-          :is-collapse="isCollapse"
-          :is-top="isTop"
+        <Item
+          v-for="noHiddenRoute in noHiddenRoutes"
+          :key="noHiddenRoute.path"
+          :item="noHiddenRoute"
+          :base-path="noHiddenRoute.path"
         />
       </el-menu>
     </el-scrollbar>
@@ -77,7 +72,7 @@ const tipLineWidth = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@mixin tip-line {
+%tip-line {
   &::before {
     content: "";
     position: absolute;
@@ -91,20 +86,15 @@ const tipLineWidth = computed(() => {
 
 .has-logo {
   .el-scrollbar {
-    // 多 1% 是为了在左侧模式时侧边栏最底部不显示 1px 左右的白色线条
-    height: calc(101% - var(--v3-header-height));
+    height: calc(100% - var(--v3-header-height));
   }
 }
 
 .el-scrollbar {
-  // 多 5% 是为了在顶部模式时不显示垂直滚动条
-  height: 105%;
+  height: 100%;
   :deep(.scrollbar-wrapper) {
     // 限制水平宽度
-    overflow-x: hidden !important;
-    .el-scrollbar__view {
-      height: 100%;
-    }
+    overflow-x: hidden;
   }
   // 滚动条
   :deep(.el-scrollbar__bar) {
@@ -116,9 +106,13 @@ const tipLineWidth = computed(() => {
 }
 
 .el-menu {
+  user-select: none;
   border: none;
-  min-height: 100%;
-  width: 100% !important;
+  width: 100%;
+}
+
+.el-menu--horizontal {
+  height: v-bind(sidebarMenuItemHeight);
 }
 
 :deep(.el-menu-item),
@@ -131,32 +125,25 @@ const tipLineWidth = computed(() => {
   &:hover {
     background-color: v-bind(sidebarMenuHoverBgColor);
   }
-  display: block;
-  * {
-    vertical-align: middle;
-  }
 }
 
 :deep(.el-sub-menu) {
   &.is-active {
     > .el-sub-menu__title {
-      color: v-bind(activeTextColor) !important;
+      color: v-bind(activeTextColor);
     }
   }
 }
 
-:deep(.el-menu-item) {
-  &.is-active {
-    @include tip-line;
-  }
+:deep(.el-menu-item.is-active) {
+  @extend %tip-line;
 }
 
 .el-menu--collapse {
-  :deep(.el-sub-menu) {
-    &.is-active {
-      .el-sub-menu__title {
-        @include tip-line;
-      }
+  :deep(.el-sub-menu.is-active) {
+    .el-sub-menu__title {
+      @extend %tip-line;
+      background-color: v-bind(sidebarMenuHoverBgColor);
     }
   }
 }

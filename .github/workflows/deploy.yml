@@ -14,18 +14,18 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Node.js 18.16.1
+      - name: Setup Node.js
         uses: actions/setup-node@master
         with:
-          node-version: "18.16.1"
+          node-version: 22.16.0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: "8.6.3"
+          version: 10.12.1
 
       - name: Build
-        run: pnpm install && pnpm build:prod
+        run: pnpm install && pnpm build
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
